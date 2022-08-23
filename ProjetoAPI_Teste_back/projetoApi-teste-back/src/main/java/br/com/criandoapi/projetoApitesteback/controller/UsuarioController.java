@@ -1,7 +1,7 @@
 package br.com.criandoapi.projetoApitesteback.controller;
 
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,40 +15,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.criandoapi.projetoApitesteback.DAO.InterfaceUsuario;
 import br.com.criandoapi.projetoApitesteback.model.Usuario;
+import br.com.criandoapi.projetoApitesteback.repository.InterfaceUsuario;
+import br.com.criandoapi.projetoApitesteback.service.UsuarioService;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-	@Autowired
-	private InterfaceUsuario dao;
 	
+	private UsuarioService usuarioService;
+	
+	private UsuarioController(UsuarioService usuarioService) {
+		this.usuarioService = usuarioService;
+		
+	}
 	
 	@GetMapping
-	public ResponseEntity<List<Usuario>>  listaUsuarios() {
-		List<Usuario> lista = (List<Usuario>) dao.findAll();
-		return ResponseEntity.status(200).body(lista);
+	public ResponseEntity<List<Usuario>>  listaUsuarios() {	
+		return ResponseEntity.status(200).body(usuarioService.listarUsuario());
 	}
 	
 	@PostMapping
 	public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario ) {
-		Usuario usuarioNovo = dao.save(usuario);
-		return ResponseEntity.status(201).body(usuarioNovo);
+		return ResponseEntity.status(201).body(usuarioService.criarUsuario(usuario));
 	}
 	
 	@PutMapping
 	public ResponseEntity<Usuario> editarUsuario(@RequestBody Usuario usuario) {
-		Usuario usuarioEditado = dao.save(usuario);
-		return ResponseEntity.status(200).body(usuarioEditado);
+		return ResponseEntity.status(200).body(usuarioService.editarUsuario(usuario));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deletarUsuario(@PathVariable Integer id) {
-		
-		dao.deleteById(id);
+		usuarioService.deletarUsuario(id);
 		return ResponseEntity.status(204).build();
 	}
 	
