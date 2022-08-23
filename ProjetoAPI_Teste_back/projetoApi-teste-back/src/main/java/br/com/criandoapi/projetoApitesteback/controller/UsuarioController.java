@@ -2,8 +2,7 @@ package br.com.criandoapi.projetoApitesteback.controller;
 
 import java.util.List;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.criandoapi.projetoApitesteback.model.Usuario;
-import br.com.criandoapi.projetoApitesteback.repository.InterfaceUsuario;
 import br.com.criandoapi.projetoApitesteback.service.UsuarioService;
 
 @RestController
@@ -27,8 +25,10 @@ public class UsuarioController {
 	
 	private UsuarioService usuarioService;
 	
+	
 	private UsuarioController(UsuarioService usuarioService) {
 		this.usuarioService = usuarioService;
+		
 		
 	}
 	
@@ -51,6 +51,15 @@ public class UsuarioController {
 	public ResponseEntity<?> deletarUsuario(@PathVariable Integer id) {
 		usuarioService.deletarUsuario(id);
 		return ResponseEntity.status(204).build();
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<Usuario> validarSenha(@RequestBody Usuario usuario){
+		Boolean valid = usuarioService.validarSenha(usuario);
+		if(!valid) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		return ResponseEntity.status(200).build();
 	}
 	
 }
